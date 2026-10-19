@@ -1,5 +1,4 @@
 #include<stdio.h>
-/// @brief 
 void main()
 {
       int arr[100], n, i;
