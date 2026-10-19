@@ -1,80 +1,86 @@
 #include <stdio.h>
-#define MAX 100
+#define MAX 5
 int queue[MAX];
-int size = 0;
+int front = -1, rear = -1;
 
-void insert(int value)
+void enqueue(int value)
 {
-    int i;
-    if (size == MAX)
+    if ((rear + 1) % MAX == front)
     {
         printf("Queue is Full\n");
         return;
     }
-    i = size - 1;
-    while (i >= 0 && queue[i] > value)
-    {
-        queue[i + 1] = queue[i];
-        i--;
-    }
-    queue[i + 1] = value;
-    size++;
+    if (front == -1)
+        front = 0;
+    rear = (rear + 1) % MAX;
+    queue[rear] = value;
     printf("%d inserted\n", value);
 }
 
-void deleteMin()
+void dequeue()
 {
-    int i;
-    if (size == 0)
+    if (front == -1)
     {
         printf("Queue is Empty\n");
         return;
     }
-    printf("Deleted element: %d\n", queue[0]);
-    for (i = 0; i < size - 1; i++)
-    {
-        queue[i] = queue[i + 1];
-    }
-    size--;
+    printf("Deleted element: %d\n", queue[front]);
+    if (front == rear)
+        front = rear = -1;
+    else
+        front = (front + 1) % MAX;
 }
 
 void display()
 {
     int i;
-    if (size == 0)
+    if (front == -1)
     {
         printf("Queue is Empty\n");
         return;
     }
     printf("Queue: ");
-    for (i = 0; i < size; i++)
+    i = front;
+    while (1)
     {
         printf("%d ", queue[i]);
+        if (i == rear)
+            break;
+        i = (i + 1) % MAX;
     }
     printf("\n");
 }
 
 int main()
 {
-
     int choice, value;
     while (1)
     {
-        printf("\n--- PRIORITY QUEUE (MIN) ---\n");
-        printf("1. Insert\n");
-        printf("2. Delete Minimum\n");
+        printf("\n--- CIRCULAR QUEUE ---\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
         printf("3. Display\n");
         printf("4. Exit\n");
         printf("Enter choice: ");
-        scanf("%d", &choice);
+        if (scanf("%d", &choice) != 1)
+        {
+            while (getchar() != '\n');
+            printf("Invalid input\n");
+            continue;
+        }
         switch (choice)
         {
             case 1:
                 printf("Enter value: ");
-                scanf("%d", &value);
-                insert(value);
+                if (scanf("%d", &value) != 1)
+                {
+                    while (getchar() != '\n');
+                    printf("Invalid input\n");
+                    break;
+                }
+                enqueue(value);
                 break;
-            case 2: deleteMin(); break;
+            case 2: dequeue(); break;
             case 3: display(); break;
             case 4: return 0;
             default: printf("Invalid choice\n");
